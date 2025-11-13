@@ -1,0 +1,35 @@
+version: 0.2
+env:
+  variables:
+    CODEBUILD_GIT_BRANCH: 'master'
+phases:
+  install:
+    runtime-versions: 
+      nodejs: 10
+      docker: 18
+  pre_build:
+    commands:
+      - echo Installing all the dependencies
+      - yum install zip -y
+      - echo $CODEBUILD_BUILD_NUMBER
+      - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+      - npm install
+  build:
+    commands:
+      - npm run build
+  post_build:
+    commands:
+      - mkdir build-output
+      - cp -R build/velocity-gateway/ build-output
+      - ls -al
+      - pwd
+      - cp package.json ./build-output/velocity-gateway
+      - cd build-output/
+      - ls -al
+      - zip -qr build-output.zip ./*
+      - rm -rf velocity-gateway
+      - touch output.txt
+      - echo Commitid-$CODEBUILD_RESOLVED_SOURCE_VERSION > output.txt
+      - echo Build Number-$CODEBUILD_BUILD_NUMBER >> output.txt
+      - date >> output.txt
+      - "aws s3 cp --recursive . s3://all-build-artifact/smart-antenna-plugin/$CODEBUILD_GIT_BRANCH.$CODEBUILD_BUILD_NUMBER/"

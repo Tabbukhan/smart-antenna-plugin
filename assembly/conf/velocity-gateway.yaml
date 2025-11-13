@@ -1,0 +1,199 @@
+# Transport listeners are adaptors that receive messages
+# from different sources and dispatch them to the inner layers
+# of the velocity gateway. Typically, they will wrap
+# and listen to a TCP server socket, Kafka/MQTT/AMQP subscriber, etc.
+transport_receivers:
+- transport_receiver:
+    name: mqtt
+    class: MQTTTransportReceiver
+    parameters:
+    - # Content type of the messages processed by the MQTT transport receiver.
+      #content_type: "application/vnd.speedshield.ext+json"
+      content_type: "application/cbor"
+      
+      # Name of the service model, which would process messages accepted by the
+      # MQTT transport receiver.
+      service_name: "SmartAntennaService"
+      # Name of the operation locator used to resolve incoming message types
+      # and their corresponding operation in the service model.
+      operation_locator: "ProDriveHeaderBasedOperationLocator"
+      # Hostname of the remote MQTT broker, which the gateway listens to.
+      hostname: "${/mqtt/hostname:localhost}"
+      # Port through which the MQTT transport receiver listening to MQTT topics.
+      port: "${/mqtt/port:1883}"
+      # Username to log in to the remote MQTT broker
+      username: "${/mqtt/username:username}"
+      # Password to log in to the remote MQTT broker
+      password: "${/mqtt/password:password}"
+      # Topic that velocity-gateway should subscribed to receive messages
+      topic: "${/mqtt/topic:dev.er.event.sa}"
+      # Id that would uniquely identify a particular gateway process by the MQTT broker
+      client_id: "client-sa-dev-mqtt"
+      # Flag that controls if messages assigned with QoS value 1, 2 should be persisted
+      # in case of a failure
+      clean_session: false
+      # QoS value reflecting how guaranteed delivery should happen.
+      # Accepted values: 0, 1, 2
+      qos: 1
+      # Frequency at which the keepalive packets are sent in order to maintain
+      # a persistence connection with the MQTT broker.
+      keepalive: 60
+- transport_receiver:
+    name: mqtts
+    class: MQTTSTransportReceiver
+    parameters:
+    - # Content type of the messages processed by the MQTT transport receiver.
+      content_type: "application/cbor"
+      # Name of the service model, which would process messages accepted by the
+      # MQTT transport receiver.
+      service_name: "SmartAntennaService"
+      # Name of the operation locator used to resolve incoming message types
+      # and their corresponding operation in the service model.
+      operation_locator: "ProDriveHeaderBasedOperationLocator"
+      # Hostname of the remote MQTT broker, which the gateway listens to.
+      hostname: "${/mqtts/hostname:localhost}"
+      # This is used to fix this the following error === Hostname/IP doesn't match certificate's altnames ===
+      servername: "${/mqtts/servername:localhost}"
+      # Port through which the MQTT transport receiver listening to MQTT topics.
+      port: ${/mqtts/port:8883}
+      # Username to log in to the remote MQTT broker
+      username: "${/mqtts/username:username}"
+      # Password to log in to the remote MQTT broker
+      password: "${/mqtts/password:password}"
+      # Topic that velocity-gateway should subscribed to receive messages
+      topic: "${/mqtts/topic:dev.er.event.sa}"
+      # Id that would uniquely identify a particular gateway process by the MQTT broker
+      client_id: "client-sa-dev-mqtts"
+      # Flag that controls if messages assigned with QoS value 1, 2 should be persisted
+      # in case of a failure
+      clean_session: false
+      # QoS value reflecting how guaranteed delivery should happen.
+      # Accepted values: 0, 1, 2
+      qos: 1
+      # Frequency at which the keepalive packets are sent in order to maintain
+      # a persistence connection with the MQTT broker.
+      keepalive: 60
+      # Indicates the transport protocol used.
+      protocol: "ssl"
+      # Path to the key file generated for the server. Key file should be in
+      # .pem format.
+      key_path: "./resources/security/gateway.key"
+      # Path to the certificate file generated for the server. certificate should be in
+      # .pem format.
+      cert_path: "./resources/security/gateway.crt"
+      # Comma separated list of CA certificates used for validating incoming connections.
+      # CA certificates files should be in .pem format.
+      #caPaths: "./resources/security/ca-crt.pem"
+      # If not false the server will reject any connection which is not authorized with
+      # the list of supplied CAs. This option only has an effect if requestCert is true.
+      # Do not set this to false in Production environment
+      # Defaults to true
+      reject_unauthorized: false
+# - transport_receiver:
+#     name: http
+#     class: HTTPTransportReceiver
+#     parameters:
+#     - # Address of the network interface that the HTTP transport receiver binds itself to.
+#       # Defaults to 'localhost', indicating that the TCP server by default binds to the
+#       # address "hostname". Configuring the bind_address parameter with "*" would make
+#       # the underlying HTTP server binds to all network interfaces.
+#       bind_address: "localhost"
+#       # Port through which the TCP transport receiver accepts connections.
+#       port: 8081
+
+# Transport senders are adaptors that send messages
+# out of the velocity gateway towards different varieties of endpoints
+# such as REST/SOAP services, Kafka/MQTT/AMQP brokers, etc.
+transport_senders:
+- transport_sender:
+    name: "kafka"
+    class: "KafkaTransportSender"
+    parameters:
+    - # [Hostname]:[Port] pairs of the nodes of the Kafka cluster
+      # that the event receiver connects to. [Hostname]:[Port] pairs of
+      # multiple nodes can be configured as a commma separated list of strings.
+      # i.e. broker_list: x.x.x.x:9092, x.x.x.x:9092, x.x.x.x:9092
+      broker_list: "${/kafka/broker-list:localhost:9092}"
+      # Enables kakfaJS debug logging
+      enable_logging: "${/kafka/enable-logging:false}"
+      # How long to wait for authentication. Defaults to 10000
+      authentication_timeout: "${/kafka/authentication-timeout:10000}"
+      # How long to wait for a successful connection. Defaults to 5000
+      connection_timeout: "${/kafka/connection-timeout:5000}"
+      # How long to wait for a successful request. Defaults to 30000
+      request_timeout: "${/kafka/request-timeout:30000}"
+      # If truthy, SSL/SASL authentication is used. If false, all the following parameters are ignore
+      authenticated: "${/kafka/authenticated:false}"
+      # The SASL authenticaiton mechanism. "PLAIN"|"SCRAM-SHA-256"|"SCRAM-SHA-512"|"NONE"|""
+      sasl_mechanisms: "${/kafka/sasl-mechanisms:PLAIN}"
+      # The username for SASL authentication
+      sasl_username: "${/kafka/sasl-username:key}"
+      # They password (secret) for SASL authentication
+      sasl_password: "${/kafka/sasl-password:passphrase}"
+      # Location to load SSL_CA certificate from. If not included KafkaJS seems to guess correctly. Can be a file or directory (from which .pem files are loaded)
+      ssl_ca_location: "${/kafka/ssl-ca-location:}"
+      # Location to load SSL_KEY certificates from. If not included KafkaJS seems to guess correctly
+      ssl_key_location: "${/kafka/ssl-key-location:}"
+      # Location to load SSL_CERT certificates from. If not included KafkaJS seems to guess correctly
+      ssl_cert_location: "${/kafka/ssl-cert-location:}"
+      # Forces the TLS socket to check against this servername instead of the brokerlist servername
+      ssl_servername: "${/kafka/ssl-servername:}"
+      # Rejects unauthorized SSL certificates if set to true.
+      ssl_reject_unauthorized: "${/kafka/ssl-reject-unauthorized:false}"
+# - transport_sender:
+#     name: "http"
+#     class: "HTTPTransportSender"
+#     parameters:
+
+# Message builders are adaptors that tell transport receiver framework
+# on how to parse incoming messages transmitted into it in a particular
+# content type. In an event where multiple message builders are
+# configured against a particular content type, only the last one
+# will be picked.
+message_builders:
+- # JSON based message builder configuration.
+  message_builder:
+    content_type: "application/json"
+    class: "JsonMessageBuilder"
+- # JSON based message builder configuration.
+  message_builder:
+    content_type: "application/vnd.speedshield.ext+json"
+    class: "ExtendedJsonMessageBuilder"
+- # JSON based message builder configuration.
+  message_builder:
+    content_type: "application/x-www-form-urlencoded"
+    class: "XFormURLEncodedMessageBuilder"
+- # CBOR based message builder configuration.
+  message_builder:
+    content_type: "application/cbor"
+    class: "CBORMessageBuilder"
+
+# Message formatters are adaptors that tell transport receiver framework
+# on how to parse outgoing messages out of it in a particular
+# content type. In an event where multiple message formatters are
+# configured against a particular content type, only the last one
+# will be picked.
+message_formatters:
+- # JSON based message formatter configuration.
+  message_formatter:
+    content_type: "application/json"
+    class: "JSONMessageFormatter"
+
+# Configures all the authenticators used in the gateway.
+authenticators:
+# Configuration of the Huid-based authenticator
+- authenticator:
+    # Name of the authenticator
+    name: "huid"
+    # Class that implements Huid validation logic
+    class: "HuidAuthenticator"
+    # Additional properties required to initialize the authenticator
+    parameters:
+      device_mgt_repository_url: "http://localhost:80"
+
+# Service deployers deploy services from a given service registry.
+# i.e. File system, database, etc.
+service_deployers:
+- service_deployer:
+    class: FSServiceDeployer
+    parameters:

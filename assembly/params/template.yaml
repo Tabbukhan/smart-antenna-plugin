@@ -1,0 +1,46 @@
+# Parameters for local dev testing.
+# Copy this file, call it '<PREFIX>.yaml'
+
+/kafka-destination-topic: "dev.er.event.sa"
+/kafka-invalid-topic: "dead.letter"
+/mqtt:
+  /hostname: localhost
+  /port: 1883
+  /username: "username"
+  /password: "password"
+  /topic: "testTopic"
+/mqtts:
+  /hostname: localhost
+  /servername: localhost
+  /port: 8883
+  /username: "username"
+  /password: "password"
+  /topic: "testTopic"
+/kafka:
+  /broker-list: "localhost:9092"
+  /enable-logging: false
+  /authentication-timeout: "10000"
+  /connection-timeout: "5000"
+  /request-timeout: "30000"
+  /authenticated: false
+  /sasl-mechanisms: "PLAIN"
+  /sasl-username: ""
+  /sasl-password: ""
+  /ssl-ca-location: ""
+  /ssl-key-location: ""
+  /ssl-cert-location: ""
+  /ssl-servername: ""
+  /ssl-reject-unauthorized: false
+  
+# For the event transformer
+/event-transformer:
+  /s3:
+    /bucket: Null
+    /zipname: Null
+  /sql:
+    /username: sa
+    /password: PassW0rd
+    /host: localhost
+    /database: Dev
+  /fs:
+    /root-path: "resources"

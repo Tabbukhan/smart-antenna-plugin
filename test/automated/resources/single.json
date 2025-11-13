@@ -1,0 +1,40 @@
+{
+    "header": {
+        "message_type": 0,
+        "device_id": "1823A050HV",
+        "device_type": 1,
+        "AssetId": "L177892442J"
+    },
+    "body": {
+        "event": {
+            "metadata": {
+                "event_type": 6,
+                "schema_version": 1,
+                "timestamp": "2019-02-05T23:00:13.000Z",
+                "AssetTimeZone": 66
+            },
+            "data": {
+                "SessionId": 12345,
+                "PreStartChecklist_FaultResponse": 0,
+                "PostStartChecklist_FaultResponse": 1,
+                "Checklist_LockoutResponse": 0,
+                "Checklist_OverTimeResponse": 0,
+                "Checklist_QuestionsAnswered": 127,
+                "Duration": 234,
+                "PreStartChecklistDuration": 102,
+                "Checklist_NotAllAnswered": false,
+                "AssetLockoutOccurred": false,
+                "AssetShutdownOccurred": false,
+                "Checklist_PreStartShutdownDelay": 60,
+                "Checklist_PostStartShutdownDelay": 60,
+                "Checklist_PreStartOverTimeDelay": 60,
+                "Checklist_PostStartOverTimeDelay": 60,
+                "OperatorId": 101,
+                "FacilityCode": 10,
+                "AssetDisableCount": 0,
+                "Checklist_AssetDisableDelay": 60,
+                "Checklist_MinimumAssetDisablePeriod": 10
+            }
+        }
+    }
+}

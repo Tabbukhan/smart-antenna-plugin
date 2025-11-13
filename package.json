@@ -1,0 +1,46 @@
+{
+  "name": "smart-antenna-plugin",
+  "version": "2.6.0",
+  "description": "The module for transforming incoming MQTT messages and routing them into Kafka endpoints",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "VELOCITY_HOME=assembly node $NODE_DEBUG_OPTION src/Main.js",
+    "debug": "VELOCITY_HOME=assembly LOG_LEVEL=debug SKIP_SSM=true node $NODE_DEBUG_OPTION src/Main.js",
+    "test": "VELOCITY_HOME=assembly mocha test/automated* --recursive ",
+    "build": "chmod +x scripts/build-package.sh && CLEAN_BUILD=true ./scripts/build-package.sh",
+    "build-debug": "chmod +x scripts/build-package.sh && ./scripts/build-package.sh",
+    "compile": "eslint src",
+    "compile-tests": "eslint test/*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SpeedshieldTechnologies/smart-antenna-plugin.git"
+  },
+  "author": "Speedshield Developers",
+  "keywords": [
+    "smart-antenna",
+    "smart-antenna-plugin"
+  ],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SpeedshieldTechnologies/smart-antenna-plugin/issues"
+  },
+  "homepage": "https://github.com/SpeedshieldTechnologies/smart-antenna-plugin#readme",
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "dotenv": "^6.2.0",
+    "eslint": "^4.19.1",
+    "expect": "^23.6.0",
+    "mocha": "^4.1.0"
+  },
+  "dependencies": {
+    "@speedshield/velocity-commons": "^2.1.8",
+    "@speedshield/velocity-configuration-manager": "^1.0.10",
+    "@speedshield/velocity-event-transformer": "^2.3.2",
+    "@speedshield/velocity-gateway-core": "^3.0.3",
+    "@speedshield/velocity-kafka-utils": "^1.0.13",
+    "@speedshield/velocity-logging": "^1.0.8",
+    "clone": "^2.1.2",
+    "lodash": "^4.17.21"
+  }
+}

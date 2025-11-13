@@ -1,0 +1,5 @@
+# Don't include anything in this folder.
+# This is for development files only and should not be comitted to git
+*
+!.gitignore
+!template.yaml

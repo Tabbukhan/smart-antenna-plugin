@@ -1,0 +1,81 @@
+{
+    "header": {
+        "message_type": 0,
+        "device_id": "15E6EC42-2DC6-11E9-B210-D663BD873D93",
+        "device_type": 0,
+        "AssetId": "15E6EC422DC611E9B210D663BD873D93"
+    },
+    "body": {
+        "events": [
+            {
+                "metadata": {
+                    "event_type": 6,
+                    "schema_version": 1,
+                    "timestamp": "2019-03-25T01:30:00.000Z",
+                    "AssetTimeZone": 25
+                },
+                "data": {
+                    "SessionId": 40,
+                    "PreStartChecklist_FaultResponse": 2,
+                    "PostStartChecklist_FaultResponse": 0,
+                    "Checklist_LockoutResponse": 0,
+                    "Checklist_OverTimeResponse": 0,
+                    "Checklist_QuestionsAnswered": 0,
+                    "Duration": 0,
+                    "PreStartChecklistDuration": 0,
+                    "Checklist_NotAllAnswered": true,
+                    "AssetLockoutOccurred": true,
+                    "AssetShutdownOccurred": true,
+                    "Checklist_PreStartShutdownDelay": 60,
+                    "Checklist_PostStartShutdownDelay": 60,
+                    "Checklist_PreStartOverTimeDelay": 60,
+                    "Checklist_PostStartOverTimeDelay": 60,
+                    "OperatorId": 1,
+                    "FacilityCode": 2,
+                    "AssetDisableCount": 0,
+                    "Checklist_AssetDisableDelay": 60,
+                    "Checklist_MinimumAssetDisablePeriod": 10
+                }
+            },
+            {
+                "metadata": {
+                    "event_type": 4,
+                    "schema_version": 1,
+                    "timestamp": "2019-03-25T01:30:00.000Z",
+                    "AssetTimeZone": 25
+                },
+                "data": {
+                    "SessionId": 23,
+                    "AssetStatus": 3,
+                    "AccessLevel": 2,
+                    "OperatorId": 2,
+                    "FacilityCode": 3
+                }
+            },
+            {
+                "metadata": {
+                    "event_type": 24,
+                    "schema_version": 1,
+                    "timestamp": "2019-03-25T01:30:00.000Z",
+                    "AssetTimeZone": 25
+                },
+                "data": {
+                    "SessionId": 0,
+                    "GpsLat": 0,
+                    "GpsLong": 0,
+                    "GpsSpeed": 0,
+                    "GpsBearing": 0,
+                    "GpsSatCount": 0,
+                    "GpsFixType": 3,
+                    "GpsAltitude": 0,
+                    "GpsFixDT": "2019-03-25T04:44:59.864Z",
+                    "GpsHDOP": 0,
+                    "AssetStatus": 3,
+                    "GpsPositionId": 0,
+                    "OperatorId": 1,
+                    "FacilityCode": 2
+                }
+            }
+        ]
+    }
+}

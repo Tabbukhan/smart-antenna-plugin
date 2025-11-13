@@ -1,0 +1,51 @@
+name: Build and Push Docker to ECR
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build-and-push:
+    name: Build and Push to ECR
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_REGION: ap-south-1
+      ECR_REGISTRY: 863518489899.dkr.ecr.ap-south-1.amazonaws.com
+      ECR_REPO: smart-antenna-plugin
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::863518438989:role/OIDC_GITHUB
+          aws-region: ap-south-1
+
+      - name: Login to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Create ECR Repository if not exists
+        run: |
+          aws ecr describe-repositories --repository-names $ECR_REPO || \
+          aws ecr create-repository --repository-name $ECR_REPO
+
+      - name: Build Docker Image
+        run: |
+          docker build -t $ECR_REPO .
+
+      - name: Tag Docker Image
+        run: |
+          docker tag $ECR_REPO:latest $ECR_REGISTRY/$ECR_REPO:latest
+
+      - name: Push Docker Image to ECR
+        run: |
+          docker push $ECR_REGISTRY/$ECR_REPO:latest
