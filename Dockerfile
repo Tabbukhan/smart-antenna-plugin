@@ -2,18 +2,23 @@ FROM node:18
 
 WORKDIR /app
 
-# Copy npmrc for private registry
-COPY .npmrc ./l
+# Accept NPM_TOKEN from GitHub Actions
+ARG NPM_TOKEN
+ENV NPM_TOKEN=${NPM_TOKEN}
 
-# Copy dependency files
-COPY package.json package-lock.json ./
+# Write secure .npmrc for private registry access
+RUN echo "@speedshield:registry=https://registry.npmjs.org/" > .npmrc \
+    && echo "always-auth=true" >> .npmrc \
+    && echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> .npmrc
+
+# Copy package files first (better layer caching)
+COPY package*.json ./
 
 # Install dependencies
 RUN npm install --legacy-peer-deps
 
-# Copy source
+# Copy source code
 COPY . .
 
-ENV VELOCITY_HOME=assembly
-
+# Start application
 CMD ["node", "src/Main.js"]
