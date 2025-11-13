@@ -18,48 +18,54 @@ jobs:
     env:
       AWS_REGION: ap-south-1
       AWS_ACCOUNT_ID: 863518438989
-      ECR_REGISTRY: 863518438989.dkr.ecr.ap-south-1.amazonaws.com/smart-antenna-plugin
+      ECR_REGISTRY: 863518438989.dkr.ecr.ap-south-1.amazonaws.com
       ECR_REPO: smart-antenna-plugin
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      # OIDC Auth for AWS
       - name: Configure AWS Credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::863518438989:role/OIDC_GITHUB   # FIXED ACCOUNT ID
-          aws-region: ap-south-1
+          role-to-assume: arn:aws:iam::863518438989:role/OIDC_GITHUB
+          aws-region: ${{ env.AWS_REGION }}
           audience: sts.amazonaws.com
 
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
 
-      # Secure npm setup for private Speedshield packages
-      - name: Create secure .npmrc
+      # Secure npm registry access for private Speedshield packages
+      - name: Setup npm auth
         run: |
-          echo "@speedshield:registry=https://registry.npmjs.org/" > ~/.npmrc
-          echo "always-auth=true" >> ~/.npmrc
-          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> ~/.npmrc
+          echo "@speedshield:registry=https://registry.npmjs.org/" > .npmrc
+          echo "always-auth=true" >> .npmrc
+          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" >> .npmrc
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Install Node Dependencies
         run: npm install --legacy-peer-deps
 
+      # Create ECR repo if not exist
       - name: Create ECR Repository (if not exists)
         run: |
-          aws ecr describe-repositories --repository-names "$ECR_REPO" || \
-          aws ecr create-repository --repository-name "$ECR_REPO"
+          aws ecr describe-repositories --repository-names "${ECR_REPO}" || \
+          aws ecr create-repository --repository-name "${ECR_REPO}"
 
+      # Build Docker image
       - name: Build Docker Image
         run: |
           docker build \
             --build-arg NPM_TOKEN=${{ secrets.NPM_TOKEN }} \
-            -t $ECR_REPO .
+            -t ${ECR_REPO}:latest .
 
+      # Tag image correctly (account.dkr.ecr.region.amazonaws.com/repo:tag)
       - name: Tag Docker Image
         run: |
-          docker tag $ECR_REPO:latest $ECR_REGISTRY/$ECR_REPO:latest
+          docker tag ${ECR_REPO}:latest ${ECR_REGISTRY}/${ECR_REPO}:latest
 
       - name: Push Docker Image to ECR
         run: |
-          docker push $ECR_REGISTRY/$ECR_REPO:latest
+          docker push ${ECR_REGISTRY}/${ECR_REPO}:latest
