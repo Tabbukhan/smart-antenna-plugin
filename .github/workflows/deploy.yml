@@ -28,7 +28,7 @@ jobs:
       - name: Configure AWS Credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::863518489899:role/OIDC_GITHUB   # FIXED ACCOUNT ID
+          role-to-assume: arn:aws:iam::863518438989:role/OIDC_GITHUB   # FIXED ACCOUNT ID
           aws-region: ap-south-1
           audience: sts.amazonaws.com
 
